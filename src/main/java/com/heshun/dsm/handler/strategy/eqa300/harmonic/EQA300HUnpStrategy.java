@@ -1,0 +1,36 @@
+package com.heshun.dsm.handler.strategy.eqa300.harmonic;
+
+import java.util.Map;
+
+import org.apache.mina.core.buffer.IoBuffer;
+import org.apache.mina.core.session.IoSession;
+
+import com.heshun.dsm.entity.Device;
+import com.heshun.dsm.handler.helper.PacketInCorrectException;
+import com.heshun.dsm.handler.strategy.AbsDeviceUnpackStrategy;
+
+public class EQA300HUnpStrategy extends AbsDeviceUnpackStrategy<EQA300HConvert, EQA300HPacket> {
+
+	public EQA300HUnpStrategy(IoSession session, IoBuffer in, Device d) {
+		super(session, in, d);
+	}
+
+	@Override
+	protected EQA300HPacket handleTotalQuery(int size, Map<Integer, byte[]> ycData, Map<Integer, byte[]> yxData,
+			Map<Integer, byte[]> ymData) throws PacketInCorrectException {
+		EQA300HPacket packet = new EQA300HPacket(mDevice.vCpu);
+
+		return packet;
+	}
+
+	@Override
+	public EQA300HConvert getConvert(EQA300HPacket packet) {
+		return new EQA300HConvert(packet);
+	}
+
+	@Override
+	public String getDeviceType() {
+		return "eqa300h";
+	}
+
+}

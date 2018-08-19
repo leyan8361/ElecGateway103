@@ -1,0 +1,81 @@
+package com.heshun.dsm.handler.strategy.switchmodule.heshun;
+
+import java.util.Map;
+
+import org.apache.mina.core.buffer.IoBuffer;
+import org.apache.mina.core.session.IoSession;
+
+import com.heshun.dsm.entity.Device;
+import com.heshun.dsm.entity.convert.AbsJsonConvert;
+import com.heshun.dsm.entity.global.DataBuffer;
+import com.heshun.dsm.handler.helper.IgnorePackageException;
+import com.heshun.dsm.handler.helper.PacketInCorrectException;
+import com.heshun.dsm.handler.strategy.AbsDeviceUnpackStrategy;
+import com.heshun.dsm.handler.strategy.switchmodule.hz.SwitchModulePacket4HZ;
+import com.heshun.dsm.handler.strategy.switchmodule.hz.SwitchModule_HZConvert;
+
+/**
+ * 开关量模块
+ * 
+ * @author huangxz
+ * 
+ */
+public class SwitchModuleUnpStrategy4Heshun
+		extends AbsDeviceUnpackStrategy<SwitchModule_HZConvert, SwitchModulePacket4HZ> {
+
+	public SwitchModuleUnpStrategy4Heshun(IoSession session, IoBuffer in, Device d) {
+		super(session, in, d);
+		dealChange = true;
+	}
+
+	@Override
+	public String getDeviceType() {
+		return "SwitchModule_HZ";
+	}
+
+	@Override
+	public SwitchModule_HZConvert getConvert(SwitchModulePacket4HZ packet) {
+		return new SwitchModule_HZConvert(packet);
+	}
+
+	@Override
+	protected SwitchModulePacket4HZ handleTotalQuery(int size, Map<Integer, byte[]> ycData, Map<Integer, byte[]> yxData,
+			Map<Integer, byte[]> ymData) throws PacketInCorrectException {
+		SwitchModulePacket4HZ packet = new SwitchModulePacket4HZ(mDevice.vCpu);
+		packet.hasVisitor = yxData.get(1)[0] == 2 ? false : true;
+		//
+		packet.hasWater = yxData.get(2)[0] == 1 ? false : true;
+		//
+		packet.hasSmoke = yxData.get(3)[0] == 1 ? false : true;
+
+		return packet;
+	}
+
+	@Override
+	protected SwitchModulePacket4HZ handleChange(int size, Map<Integer, byte[]> ycData, Map<Integer, byte[]> yxData,
+			Map<Integer, byte[]> ymData) throws IgnorePackageException {
+		AbsJsonConvert<?> c = null;
+
+		if (DataBuffer.getInstance().getBuffer() == null
+				|| DataBuffer.getInstance().getBuffer().get(getLogotype()) == null
+				|| DataBuffer.getInstance().getBuffer().get(getLogotype()).get(mDevice.vCpu) == null) {
+			c = new SwitchModule_HZConvert(new SwitchModulePacket4HZ(mDevice.vCpu));
+		} else {
+			c = DataBuffer.getInstance().getBuffer().get(getLogotype()).get(mDevice.vCpu);
+		}
+
+		SwitchModule_HZConvert orignal = (SwitchModule_HZConvert) c;
+		SwitchModulePacket4HZ packet = orignal.getOriginal();
+
+		packet.notify = true;
+		try {
+			packet.hasVisitor = yxData.get(1)[0] == 2 ? false : true;
+			packet.hasWater = yxData.get(2)[0] == 1 ? false : true;
+			packet.hasSmoke = yxData.get(3)[0] == 1 ? false : true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return packet;
+	}
+}
