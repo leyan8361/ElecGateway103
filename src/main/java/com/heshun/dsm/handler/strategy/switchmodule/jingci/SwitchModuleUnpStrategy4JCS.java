@@ -7,10 +7,12 @@ import org.apache.mina.core.session.IoSession;
 
 import com.heshun.dsm.cmd.Command;
 import com.heshun.dsm.entity.Device;
+import com.heshun.dsm.entity.ResultWrapper;
 import com.heshun.dsm.entity.convert.AbsJsonConvert;
 import com.heshun.dsm.entity.global.DataBuffer;
 import com.heshun.dsm.handler.helper.IgnorePackageException;
 import com.heshun.dsm.handler.helper.PacketInCorrectException;
+import com.heshun.dsm.handler.helper.UnRegistSupervisorException;
 import com.heshun.dsm.handler.strategy.AbsDeviceUnpackStrategy;
 
 /**
@@ -38,19 +40,9 @@ public class SwitchModuleUnpStrategy4JCS extends
 	}
 
 	@Override
-	protected SwitchModulePacket4JCS handleTotalQuery(int size, Map<Integer, byte[]> ycData,
-			Map<Integer, byte[]> yxData, Map<Integer, byte[]> ymData) throws PacketInCorrectException {
-		SwitchModulePacket4JCS packet = new SwitchModulePacket4JCS(mDevice.vCpu);
-		packet.smoke1 = yxData.get(1)[0] == 2 ? false : true;
-		packet.smoke2 = yxData.get(2)[0] == 2 ? false : true;
-		//
-
-		return packet;
-	}
-
-	@Override
-	protected SwitchModulePacket4JCS handleChange(int size, Map<Integer, byte[]> ycData, Map<Integer, byte[]> yxData,
-			Map<Integer, byte[]> ymData) throws IgnorePackageException {
+	protected SwitchModulePacket4JCS handleChange(int size, Map<Integer, ResultWrapper> ycData,
+			Map<Integer, ResultWrapper> yxData, Map<Integer, ResultWrapper> ymData) throws IgnorePackageException,
+			PacketInCorrectException {
 		AbsJsonConvert<?> c = null;
 
 		if (DataBuffer.getInstance().getBuffer() == null
@@ -66,7 +58,7 @@ public class SwitchModuleUnpStrategy4JCS extends
 
 		packet.notify = true;
 		try {
-			packet.smoke1 = yxData.get(1)[0] == 1 ? false : true;
+			packet.smoke1 = yxData.get(1).getOriginData()[0] == 1 ? false : true;
 			if (packet.smoke1) {
 				session.write(Command.getControlCommand(packet.address, 1, true));
 			} else {
@@ -77,7 +69,7 @@ public class SwitchModuleUnpStrategy4JCS extends
 			e.printStackTrace();
 		}
 		try {
-			packet.smoke2 = yxData.get(2)[0] == 1 ? false : true;
+			packet.smoke2 = yxData.get(2).getOriginData()[0] == 1 ? false : true;
 			if (packet.smoke2) {
 				session.write(Command.getControlCommand(packet.address, 1, true));
 			} else {
@@ -86,6 +78,18 @@ public class SwitchModuleUnpStrategy4JCS extends
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		return packet;
+	}
+
+	@Override
+	protected SwitchModulePacket4JCS handleTotalQuery(int size, Map<Integer, ResultWrapper> ycData,
+			Map<Integer, ResultWrapper> yxData, Map<Integer, ResultWrapper> ymData) throws PacketInCorrectException,
+			UnRegistSupervisorException {
+		SwitchModulePacket4JCS packet = new SwitchModulePacket4JCS(mDevice.vCpu);
+		packet.smoke1 = yxData.get(1).getOriginData()[0] == 2 ? false : true;
+		packet.smoke2 = yxData.get(2).getOriginData()[0] == 2 ? false : true;
+		//
 
 		return packet;
 	}

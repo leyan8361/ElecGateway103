@@ -6,6 +6,9 @@ import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 
 import com.heshun.dsm.entity.Device;
+import com.heshun.dsm.entity.ResultWrapper;
+import com.heshun.dsm.handler.helper.PacketInCorrectException;
+import com.heshun.dsm.handler.helper.UnRegistSupervisorException;
 import com.heshun.dsm.handler.strategy.AbsDeviceUnpackStrategy;
 import com.heshun.dsm.util.Utils;
 
@@ -32,14 +35,14 @@ public class H2oUnpStrategy extends AbsDeviceUnpackStrategy<H2oConvert, H2oPacke
 	}
 
 	@Override
-	protected H2oPacket handleTotalQuery(int size, Map<Integer, byte[]> ycData, Map<Integer, byte[]> yxData,
-			Map<Integer, byte[]> ymData) {
+	protected H2oPacket handleTotalQuery(int size, Map<Integer, ResultWrapper> ycData,
+			Map<Integer, ResultWrapper> yxData, Map<Integer, ResultWrapper> ymData) throws PacketInCorrectException,
+			UnRegistSupervisorException {
 		H2oPacket packet = new H2oPacket(mDevice.vCpu);
 
-		packet.level = (short) (Utils.bytes2Short(ycData.get(1)) & 0xFFFF);
+		packet.level = (short) (Utils.bytes2Short(ycData.get(1).getOriginData()) & 0xFFFF);
 
 		return packet;
-
 	}
 
 }

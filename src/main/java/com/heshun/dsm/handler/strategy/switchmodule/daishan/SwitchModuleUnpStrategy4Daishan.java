@@ -6,6 +6,7 @@ import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 
 import com.heshun.dsm.entity.Device;
+import com.heshun.dsm.entity.ResultWrapper;
 import com.heshun.dsm.entity.convert.AbsJsonConvert;
 import com.heshun.dsm.entity.global.DataBuffer;
 import com.heshun.dsm.handler.helper.IgnorePackageException;
@@ -37,22 +38,22 @@ public class SwitchModuleUnpStrategy4Daishan extends
 	}
 
 	@Override
-	protected SwitchModulePacket4Daishan handleTotalQuery(int size, Map<Integer, byte[]> ycData,
-			Map<Integer, byte[]> yxData, Map<Integer, byte[]> ymData) throws PacketInCorrectException {
+	protected SwitchModulePacket4Daishan handleTotalQuery(int size, Map<Integer, ResultWrapper> ycData,
+			Map<Integer, ResultWrapper> yxData, Map<Integer, ResultWrapper> ymData) throws PacketInCorrectException {
 		SwitchModulePacket4Daishan packet = new SwitchModulePacket4Daishan(mDevice.vCpu);
-		packet.hasSmoke1 = yxData.get(1)[0] == 1 ? false : true;
+		packet.hasSmoke1 = yxData.get(1).getOriginData()[0] == 1 ? false : true;
 		//
-		packet.hasSmoke2 = yxData.get(2)[0] == 1 ? false : true;
+		packet.hasSmoke2 = yxData.get(2).getOriginData()[0] == 1 ? false : true;
 		//
-		packet.hasVisitor1 = yxData.get(3)[0] == 1 ? false : true;
-		packet.hasVisitor2 = yxData.get(4)[0] == 1 ? false : true;
-		packet.hasWater = yxData.get(5)[0] == 1 ? false : true;
+		packet.hasVisitor1 = yxData.get(3).getOriginData()[0] == 1 ? false : true;
+		packet.hasVisitor2 = yxData.get(4).getOriginData()[0] == 1 ? false : true;
+		packet.hasWater = yxData.get(5).getOriginData()[0] == 1 ? false : true;
 		return packet;
 	}
 
 	@Override
-	protected SwitchModulePacket4Daishan handleChange(int size, Map<Integer, byte[]> ycData,
-			Map<Integer, byte[]> yxData, Map<Integer, byte[]> ymData) throws IgnorePackageException {
+	protected SwitchModulePacket4Daishan handleChange(int size, Map<Integer, ResultWrapper> ycData,
+			Map<Integer, ResultWrapper> yxData, Map<Integer, ResultWrapper> ymData)  throws IgnorePackageException {
 		AbsJsonConvert<?> c = null;
 
 		if (DataBuffer.getInstance().getBuffer() == null
@@ -68,31 +69,31 @@ public class SwitchModuleUnpStrategy4Daishan extends
 
 		packet.notify = true;
 		try {
-			packet.hasSmoke1 = yxData.get(1)[0] == 1 ? false : true;
+			packet.hasSmoke1 = yxData.get(1).getOriginData()[0] == 1 ? false : true;
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		try {
-			packet.hasSmoke2 = yxData.get(2)[0] == 1 ? false : true;
+			packet.hasSmoke2 = yxData.get(2).getOriginData()[0] == 1 ? false : true;
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		try {
-			packet.hasVisitor1 = yxData.get(3)[0] == 1 ? false : true;
+			packet.hasVisitor1 = yxData.get(3).getOriginData()[0] == 1 ? false : true;
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		try {
-			packet.hasVisitor2 = yxData.get(4)[0] == 1 ? false : true;
+			packet.hasVisitor2 = yxData.get(4).getOriginData()[0] == 1 ? false : true;
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		try {
-			packet.hasWater = yxData.get(5)[0] == 1 ? false : true;
+			packet.hasWater = yxData.get(5).getOriginData()[0] == 1 ? false : true;
 
 		} catch (Exception e) {
 			e.printStackTrace();

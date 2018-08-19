@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import org.apache.mina.core.session.IoSession;
 
 import com.heshun.dsm.cmd.Command;
+import com.heshun.dsm.entity.ResultWrapper;
 import com.heshun.dsm.handler.helper.IgnorePackageException;
 import com.heshun.dsm.handler.helper.PacketInCorrectException;
 import com.heshun.dsm.util.ELog;
@@ -15,14 +16,14 @@ import com.heshun.dsm.util.SessionUtils;
 
 public class SwitchModuleProxy {
 
-	protected void handleControl(IoSession s, Map<Integer, byte[]> ycData, Map<Integer, byte[]> yxData,
-			Map<Integer, byte[]> ymData) throws IgnorePackageException, PacketInCorrectException {
+	protected void handleControl(IoSession s, Map<Integer, ResultWrapper> ycData, Map<Integer, ResultWrapper> yxData,
+			Map<Integer, ResultWrapper> ymData) throws IgnorePackageException, PacketInCorrectException {
 
 		HashMap<String, byte[]> config = SessionUtils.getSwitchConfig(s);
 		if (config != null && !config.isEmpty()) {
-			for (Entry<Integer, byte[]> entry : yxData.entrySet()) {
+			for (Entry<Integer, ResultWrapper> entry : yxData.entrySet()) {
 				int index = entry.getKey();
-				int flag = entry.getValue()[0];
+				int flag = entry.getValue().getOriginData()[0];
 
 				// 获取构造控制命令的参数
 				byte[] commandParams = config.get(index + "-" + flag);

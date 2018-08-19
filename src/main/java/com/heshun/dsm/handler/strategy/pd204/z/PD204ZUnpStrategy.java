@@ -8,7 +8,9 @@ import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 
 import com.heshun.dsm.entity.Device;
+import com.heshun.dsm.entity.ResultWrapper;
 import com.heshun.dsm.handler.helper.PacketInCorrectException;
+import com.heshun.dsm.handler.helper.UnRegistSupervisorException;
 import com.heshun.dsm.handler.strategy.AbsDeviceUnpackStrategy;
 import com.heshun.dsm.util.Utils;
 
@@ -85,13 +87,14 @@ public class PD204ZUnpStrategy extends AbsDeviceUnpackStrategy<PD204ZConvert, PD
 	}
 
 	@Override
-	protected PD204ZPacket handleTotalQuery(int size, Map<Integer, byte[]> ycData, Map<Integer, byte[]> yxData,
-			Map<Integer, byte[]> ymData) throws PacketInCorrectException {
+	protected PD204ZPacket handleTotalQuery(int size, Map<Integer, ResultWrapper> ycData,
+			Map<Integer, ResultWrapper> yxData, Map<Integer, ResultWrapper> ymData) throws PacketInCorrectException,
+			UnRegistSupervisorException {
 		PD204ZPacket packet = new PD204ZPacket(mDevice.vCpu);
 		try {
 			for (int i = 0; i < 30; i++) {
 				// 开始截取数据
-				byte[] _singleData = ymData.get(i + 1);
+				byte[] _singleData = ymData.get(i + 1).getOriginData();
 				byte[] data = new byte[] { _singleData[3], _singleData[2], _singleData[1], _singleData[0] };
 				setParam(i, data, packet);
 			}

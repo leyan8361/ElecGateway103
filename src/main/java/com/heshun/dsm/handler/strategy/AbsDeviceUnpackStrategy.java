@@ -8,6 +8,7 @@ import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 
 import com.heshun.dsm.entity.Device;
+import com.heshun.dsm.entity.ResultWrapper;
 import com.heshun.dsm.entity.convert.AbsJsonConvert;
 import com.heshun.dsm.entity.pack.DefaultDevicePacket;
 import com.heshun.dsm.handler.helper.BufferTransferIncompleteException;
@@ -49,9 +50,9 @@ public abstract class AbsDeviceUnpackStrategy<T extends AbsJsonConvert<V>, V ext
 			}
 			byte msgType = _head[2];
 
-			Map<Integer, byte[]> ycData = new HashMap<Integer, byte[]>();
-			Map<Integer, byte[]> yxData = new HashMap<Integer, byte[]>();
-			Map<Integer, byte[]> ymData = new HashMap<Integer, byte[]>();
+			Map<Integer, ResultWrapper> ycData = new HashMap<Integer, ResultWrapper>();
+			Map<Integer, ResultWrapper> yxData = new HashMap<Integer, ResultWrapper>();
+			Map<Integer, ResultWrapper> ymData = new HashMap<Integer, ResultWrapper>();
 			byte[] buffer = new byte[8];
 			in.get(buffer);
 			//
@@ -61,23 +62,25 @@ public abstract class AbsDeviceUnpackStrategy<T extends AbsJsonConvert<V>, V ext
 			for (;;) {
 				if (++count > dataSize)
 					break;
-				byte dataType = in.get();
+				byte packType = in.get();
 				byte index = in.get();
-				// 偏移01 0C标示
-				in.get(new byte[2]);
+				// 偏移无用数据
+				in.get();
+				// 数据类型,已知0x07 float ;0x0c unsigned short
+				byte dataType = in.get();
 				byte dataLength = in.get();
 				byte[] data = new byte[dataLength];
 				in.get();
 				in.get(data);
-				switch (dataType) {
+				switch (packType) {
 				case 0x07:
-					ycData.put((int) index, data);
+					ycData.put((int) index, new ResultWrapper(dataType, data));
 					break;
 				case 0x08:
-					yxData.put((int) index, data);
+					yxData.put((int) index, new ResultWrapper(dataType, data));
 					break;
 				case 0x0A:
-					ymData.put((int) index, data);
+					ymData.put((int) index, new ResultWrapper(dataType, data));
 					break;
 				default:
 					break;
@@ -107,8 +110,9 @@ public abstract class AbsDeviceUnpackStrategy<T extends AbsJsonConvert<V>, V ext
 	}
 
 	@SuppressWarnings("unchecked")
-	private V handle(int size, Map<Integer, byte[]> ycData, Map<Integer, byte[]> yxData, Map<Integer, byte[]> ymData,
-			PackageType type) throws PacketInCorrectException, IgnorePackageException, UnRegistSupervisorException {
+	private V handle(int size, Map<Integer, ResultWrapper> ycData, Map<Integer, ResultWrapper> yxData,
+			Map<Integer, ResultWrapper> ymData, PackageType type) throws PacketInCorrectException,
+			IgnorePackageException, UnRegistSupervisorException {
 		switch (type) {
 		default:
 		case TOTAL_QUERY:
@@ -144,14 +148,15 @@ public abstract class AbsDeviceUnpackStrategy<T extends AbsJsonConvert<V>, V ext
 	 *            >>>>type指定报文的类型（总查询、扰动、主动上送）
 	 * @throws UnRegistSupervisorException
 	 */
-	protected abstract V handleTotalQuery(int size, Map<Integer, byte[]> ycData, Map<Integer, byte[]> yxData,
-			Map<Integer, byte[]> ymData) throws PacketInCorrectException, UnRegistSupervisorException;
+	protected abstract V handleTotalQuery(int size, Map<Integer, ResultWrapper> ycData,
+			Map<Integer, ResultWrapper> yxData, Map<Integer, ResultWrapper> ymData) throws PacketInCorrectException,
+			UnRegistSupervisorException;
 
 	/**
 	 * 处理扰动
 	 */
-	protected V handleChange(int size, Map<Integer, byte[]> ycData, Map<Integer, byte[]> yxData,
-			Map<Integer, byte[]> ymData) throws IgnorePackageException, PacketInCorrectException {
+	protected V handleChange(int size, Map<Integer, ResultWrapper> ycData, Map<Integer, ResultWrapper> yxData,
+			Map<Integer, ResultWrapper> ymData) throws IgnorePackageException, PacketInCorrectException {
 		throw new IgnorePackageException(PackageType.CHANGE_NOTIF);
 	}
 
@@ -160,8 +165,8 @@ public abstract class AbsDeviceUnpackStrategy<T extends AbsJsonConvert<V>, V ext
 	 * 
 	 * @throws PacketInCorrectException
 	 */
-	protected V handleActive(int size, Map<Integer, byte[]> ycData, Map<Integer, byte[]> yxData,
-			Map<Integer, byte[]> ymData) throws IgnorePackageException, PacketInCorrectException {
+	protected V handleActive(int size, Map<Integer, ResultWrapper> ycData, Map<Integer, ResultWrapper> yxData,
+			Map<Integer, ResultWrapper> ymData) throws IgnorePackageException, PacketInCorrectException {
 
 		throw new IgnorePackageException(PackageType.ACTIVE_NOTIF);
 	}

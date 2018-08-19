@@ -7,6 +7,7 @@ import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 
 import com.heshun.dsm.entity.Device;
+import com.heshun.dsm.entity.ResultWrapper;
 import com.heshun.dsm.entity.convert.AbsJsonConvert;
 import com.heshun.dsm.entity.global.DataBuffer;
 import com.heshun.dsm.handler.helper.IgnorePackageException;
@@ -26,25 +27,14 @@ public class SwitchModuleUnpackStrategy extends AbsDeviceUnpackStrategy<SwitchMo
 	}
 
 	@Override
-	protected SwitchModulePacket handleTotalQuery(int size, Map<Integer, byte[]> ycData, Map<Integer, byte[]> yxData,
-			Map<Integer, byte[]> ymData) throws PacketInCorrectException, UnRegistSupervisorException {
-		SwitchModulePacket packet = new SwitchModulePacket(mDevice.vCpu);
-		for (Entry<Integer, byte[]> entry : yxData.entrySet()) {
-			packet.mFlags.put(String.valueOf(entry.getKey()), entry.getValue()[0] == 1 ? false : true);
-		}
-		return packet;
-
-	}
-
-	@Override
 	public SwitchModuleConvert getConvert(SwitchModulePacket packet) {
 		return new SwitchModuleConvert(packet);
 	}
 
 	@Override
-	protected SwitchModulePacket handleChange(int size, Map<Integer, byte[]> ycData, Map<Integer, byte[]> yxData,
-			Map<Integer, byte[]> ymData) throws IgnorePackageException, PacketInCorrectException {
-
+	protected SwitchModulePacket handleChange(int size, Map<Integer, ResultWrapper> ycData,
+			Map<Integer, ResultWrapper> yxData, Map<Integer, ResultWrapper> ymData) throws IgnorePackageException,
+			PacketInCorrectException {
 		AbsJsonConvert<?> c = null;
 
 		if (DataBuffer.getInstance().getBuffer() == null
@@ -58,8 +48,8 @@ public class SwitchModuleUnpackStrategy extends AbsDeviceUnpackStrategy<SwitchMo
 		SwitchModuleConvert orignal = (SwitchModuleConvert) c;
 		SwitchModulePacket packet = orignal.getOriginal();
 		packet.notify = true;
-		for (Entry<Integer, byte[]> entry : yxData.entrySet()) {
-			packet.mFlags.put(String.valueOf(entry.getKey()), entry.getValue()[0] == 1 ? false : true);
+		for (Entry<Integer, ResultWrapper> entry : yxData.entrySet()) {
+			packet.mFlags.put(String.valueOf(entry.getKey()), entry.getValue().getOriginData()[0] == 1 ? false : true);
 		}
 
 		proxy.handleControl(session, ycData, yxData, ymData);
@@ -69,6 +59,17 @@ public class SwitchModuleUnpackStrategy extends AbsDeviceUnpackStrategy<SwitchMo
 	@Override
 	public String getDeviceType() {
 		return "switch";
+	}
+
+	@Override
+	protected SwitchModulePacket handleTotalQuery(int size, Map<Integer, ResultWrapper> ycData,
+			Map<Integer, ResultWrapper> yxData, Map<Integer, ResultWrapper> ymData) throws PacketInCorrectException,
+			UnRegistSupervisorException {
+		SwitchModulePacket packet = new SwitchModulePacket(mDevice.vCpu);
+		for (Entry<Integer, ResultWrapper> entry : yxData.entrySet()) {
+			packet.mFlags.put(String.valueOf(entry.getKey()), entry.getValue().getOriginData()[0] == 1 ? false : true);
+		}
+		return packet;
 	}
 
 }

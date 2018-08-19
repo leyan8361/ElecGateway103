@@ -6,6 +6,7 @@ import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 
 import com.heshun.dsm.entity.Device;
+import com.heshun.dsm.entity.ResultWrapper;
 import com.heshun.dsm.entity.convert.AbsJsonConvert;
 import com.heshun.dsm.entity.global.DataBuffer;
 import com.heshun.dsm.handler.helper.IgnorePackageException;
@@ -20,8 +21,8 @@ import com.heshun.dsm.handler.strategy.switchmodule.hz.SwitchModule_HZConvert;
  * @author huangxz
  * 
  */
-public class SwitchModuleUnpStrategy4Heshun
-		extends AbsDeviceUnpackStrategy<SwitchModule_HZConvert, SwitchModulePacket4HZ> {
+public class SwitchModuleUnpStrategy4Heshun extends
+		AbsDeviceUnpackStrategy<SwitchModule_HZConvert, SwitchModulePacket4HZ> {
 
 	public SwitchModuleUnpStrategy4Heshun(IoSession session, IoBuffer in, Device d) {
 		super(session, in, d);
@@ -39,21 +40,21 @@ public class SwitchModuleUnpStrategy4Heshun
 	}
 
 	@Override
-	protected SwitchModulePacket4HZ handleTotalQuery(int size, Map<Integer, byte[]> ycData, Map<Integer, byte[]> yxData,
-			Map<Integer, byte[]> ymData) throws PacketInCorrectException {
+	protected SwitchModulePacket4HZ handleTotalQuery(int size, Map<Integer, ResultWrapper> ycData,
+			Map<Integer, ResultWrapper> yxData, Map<Integer, ResultWrapper> ymData) throws PacketInCorrectException {
 		SwitchModulePacket4HZ packet = new SwitchModulePacket4HZ(mDevice.vCpu);
-		packet.hasVisitor = yxData.get(1)[0] == 2 ? false : true;
+		packet.hasVisitor = yxData.get(1).getOriginData()[0] == 2 ? false : true;
 		//
-		packet.hasWater = yxData.get(2)[0] == 1 ? false : true;
+		packet.hasWater = yxData.get(2).getOriginData()[0] == 1 ? false : true;
 		//
-		packet.hasSmoke = yxData.get(3)[0] == 1 ? false : true;
+		packet.hasSmoke = yxData.get(3).getOriginData()[0] == 1 ? false : true;
 
 		return packet;
 	}
 
 	@Override
-	protected SwitchModulePacket4HZ handleChange(int size, Map<Integer, byte[]> ycData, Map<Integer, byte[]> yxData,
-			Map<Integer, byte[]> ymData) throws IgnorePackageException {
+	protected SwitchModulePacket4HZ handleChange(int size, Map<Integer, ResultWrapper> ycData,
+			Map<Integer, ResultWrapper> yxData, Map<Integer, ResultWrapper> ymData) throws IgnorePackageException {
 		AbsJsonConvert<?> c = null;
 
 		if (DataBuffer.getInstance().getBuffer() == null
@@ -69,9 +70,9 @@ public class SwitchModuleUnpStrategy4Heshun
 
 		packet.notify = true;
 		try {
-			packet.hasVisitor = yxData.get(1)[0] == 2 ? false : true;
-			packet.hasWater = yxData.get(2)[0] == 1 ? false : true;
-			packet.hasSmoke = yxData.get(3)[0] == 1 ? false : true;
+			packet.hasVisitor = yxData.get(1).getOriginData()[0] == 2 ? false : true;
+			packet.hasWater = yxData.get(2).getOriginData()[0] == 1 ? false : true;
+			packet.hasSmoke = yxData.get(3).getOriginData()[0] == 1 ? false : true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

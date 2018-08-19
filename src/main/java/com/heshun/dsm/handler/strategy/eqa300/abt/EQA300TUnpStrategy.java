@@ -8,8 +8,10 @@ import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 
 import com.heshun.dsm.entity.Device;
+import com.heshun.dsm.entity.ResultWrapper;
 import com.heshun.dsm.handler.helper.IgnorePackageException;
 import com.heshun.dsm.handler.helper.PacketInCorrectException;
+import com.heshun.dsm.handler.helper.UnRegistSupervisorException;
 import com.heshun.dsm.handler.strategy.AbsDeviceUnpackStrategy;
 import com.heshun.dsm.util.Utils;
 
@@ -23,9 +25,9 @@ public class EQA300TUnpStrategy extends AbsDeviceUnpackStrategy<EQA300TConvert, 
 	Method[] methods;
 
 	public EQA300TUnpStrategy(IoSession session, IoBuffer in, Device d) {
-		
+
 		super(session, in, d);
-		dealActive=true;
+		dealActive = true;
 		methods = new Method[37];
 		try {
 			methods[0] = EQA300TPacket.class.getMethod("set_pid", short.class);
@@ -110,12 +112,13 @@ public class EQA300TUnpStrategy extends AbsDeviceUnpackStrategy<EQA300TConvert, 
 	}
 
 	@Override
-	protected EQA300TPacket handleTotalQuery(int size, Map<Integer, byte[]> ycData, Map<Integer, byte[]> yxData,
-			Map<Integer, byte[]> ymData) throws PacketInCorrectException {
+	protected EQA300TPacket handleTotalQuery(int size, Map<Integer, ResultWrapper> ycData,
+			Map<Integer, ResultWrapper> yxData, Map<Integer, ResultWrapper> ymData) throws PacketInCorrectException,
+			UnRegistSupervisorException {
 		EQA300TPacket packet = new EQA300TPacket(mDevice.vCpu);
 		try {
 			for (int i = 0; i < 37; i++) {
-				byte[] _singleData = ycData.get(i + 1);
+				byte[] _singleData = ycData.get(i + 1).getOriginData();
 				byte high, low;
 				high = _singleData[0];
 				low = _singleData[1];
@@ -128,14 +131,15 @@ public class EQA300TUnpStrategy extends AbsDeviceUnpackStrategy<EQA300TConvert, 
 
 		return packet;
 	}
-	
+
 	@Override
-	protected EQA300TPacket handleActive(int size, Map<Integer, byte[]> ycData, Map<Integer, byte[]> yxData,
-			Map<Integer, byte[]> ymData) throws IgnorePackageException, PacketInCorrectException {
+	protected EQA300TPacket handleActive(int size, Map<Integer, ResultWrapper> ycData,
+			Map<Integer, ResultWrapper> yxData, Map<Integer, ResultWrapper> ymData) throws IgnorePackageException,
+			PacketInCorrectException {
 		EQA300TPacket packet = new EQA300TPacket(mDevice.vCpu);
 		try {
 			for (int i = 0; i < 37; i++) {
-				byte[] _singleData = ycData.get(i + 1);
+				byte[] _singleData = ycData.get(i + 1).getOriginData();
 				byte high, low;
 				high = _singleData[0];
 				low = _singleData[1];
@@ -143,11 +147,10 @@ public class EQA300TUnpStrategy extends AbsDeviceUnpackStrategy<EQA300TConvert, 
 				setParam(i, high, low, packet);
 			}
 		} catch (NullPointerException e) {
-//			e.printStackTrace();
+			// e.printStackTrace();
 			throw new PacketInCorrectException();
 		}
 
 		return packet;
 	}
-
 }

@@ -6,8 +6,10 @@ import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 
 import com.heshun.dsm.entity.Device;
+import com.heshun.dsm.entity.ResultWrapper;
 import com.heshun.dsm.entity.convert.AbsJsonConvert;
 import com.heshun.dsm.entity.pack.DefaultDevicePacket;
+import com.heshun.dsm.handler.helper.PacketInCorrectException;
 import com.heshun.dsm.handler.helper.UnRegistSupervisorException;
 import com.heshun.dsm.handler.strategy.AbsDeviceUnpackStrategy;
 import com.heshun.dsm.handler.strategy.def.DefaultUnpStrategy.DefaultConvert;
@@ -16,12 +18,6 @@ public class DefaultUnpStrategy extends AbsDeviceUnpackStrategy<DefaultConvert, 
 
 	public DefaultUnpStrategy(IoSession session, IoBuffer in, Device d) {
 		super(session, in, d);
-	}
-
-	@Override
-	protected DefaultDevicePacket handleTotalQuery(int size, Map<Integer, byte[]> ycData, Map<Integer, byte[]> yxData,
-			Map<Integer, byte[]> ymData) throws UnRegistSupervisorException {
-		throw new UnRegistSupervisorException();
 	}
 
 	public class DefaultConvert extends AbsJsonConvert<DefaultDevicePacket> {
@@ -45,6 +41,13 @@ public class DefaultUnpStrategy extends AbsDeviceUnpackStrategy<DefaultConvert, 
 	@Override
 	public String getDeviceType() {
 		return "unknown device type";
+	}
+
+	@Override
+	protected DefaultDevicePacket handleTotalQuery(int size, Map<Integer, ResultWrapper> ycData,
+			Map<Integer, ResultWrapper> yxData, Map<Integer, ResultWrapper> ymData) throws PacketInCorrectException,
+			UnRegistSupervisorException {
+		throw new UnRegistSupervisorException();
 	}
 
 }
