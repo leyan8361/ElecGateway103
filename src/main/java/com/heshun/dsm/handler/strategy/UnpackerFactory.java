@@ -7,6 +7,7 @@ import com.heshun.dsm.entity.Device;
 import com.heshun.dsm.handler.strategy.bg5485.BG5485UnpStrategy;
 import com.heshun.dsm.handler.strategy.def.DefaultUnpStrategy;
 import com.heshun.dsm.handler.strategy.dtsd342._7n.DTSD3427NUnPackStrategy;
+import com.heshun.dsm.handler.strategy.entech.disd687.DISD687UnpStrategy;
 import com.heshun.dsm.handler.strategy.eqa300.abt.EQA300TUnpStrategy;
 import com.heshun.dsm.handler.strategy.eqa300.abt.EQA300UnpStrategy;
 import com.heshun.dsm.handler.strategy.eqa300.harmonic.EQA300HUnpStrategy;
@@ -14,6 +15,7 @@ import com.heshun.dsm.handler.strategy.h2o.H2oUnpStrategy;
 import com.heshun.dsm.handler.strategy.logotype.LogoTypeUnpStrategy;
 import com.heshun.dsm.handler.strategy.pd204.e.PD204EUnpStrategy;
 import com.heshun.dsm.handler.strategy.pd204.z.PD204ZUnpStrategy;
+import com.heshun.dsm.handler.strategy.pmc350.PMC350UnpStrategy;
 import com.heshun.dsm.handler.strategy.sfo2.SFO2UnpStrategy;
 import com.heshun.dsm.handler.strategy.switchmodule.SwitchModuleUnpackStrategy;
 import com.heshun.dsm.handler.strategy.switchmodule.daishan.SwitchModuleUnpStrategy4Daishan;
@@ -65,6 +67,10 @@ public class UnpackerFactory {
 			return new H2oUnpStrategy(session, in, device);
 		case "Switch":
 			return new SwitchModuleUnpackStrategy(session, in, device);
+		case "DISD687":
+			return new DISD687UnpStrategy(session, in, device);
+		case "PMC350":
+			return new PMC350UnpStrategy(session, in, device);
 		default:
 			return new DefaultUnpStrategy(session, in, device);
 		}

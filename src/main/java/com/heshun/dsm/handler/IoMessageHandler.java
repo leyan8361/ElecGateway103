@@ -95,7 +95,6 @@ public class IoMessageHandler extends IoHandlerAdapter {
 
 	@Override
 	public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
-		// ELog.getInstance().log("sessionIdle:" + session.getId(), session);
 		session.write(Command.getLogoTypeCommand());
 
 		if (mListener != null) {

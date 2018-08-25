@@ -7,4 +7,9 @@ public class UnRegistSupervisorException extends Exception {
 		super("未知管理机,等待管理机回复自身标识");
 
 	}
+
+	public UnRegistSupervisorException(String msg) {
+		super(msg);
+
+	}
 }

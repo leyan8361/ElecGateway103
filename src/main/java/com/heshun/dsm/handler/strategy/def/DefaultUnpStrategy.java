@@ -13,6 +13,7 @@ import com.heshun.dsm.handler.helper.PacketInCorrectException;
 import com.heshun.dsm.handler.helper.UnRegistSupervisorException;
 import com.heshun.dsm.handler.strategy.AbsDeviceUnpackStrategy;
 import com.heshun.dsm.handler.strategy.def.DefaultUnpStrategy.DefaultConvert;
+import com.heshun.dsm.util.SessionUtils;
 
 public class DefaultUnpStrategy extends AbsDeviceUnpackStrategy<DefaultConvert, DefaultDevicePacket> {
 
@@ -47,7 +48,8 @@ public class DefaultUnpStrategy extends AbsDeviceUnpackStrategy<DefaultConvert, 
 	protected DefaultDevicePacket handleTotalQuery(int size, Map<Integer, ResultWrapper> ycData,
 			Map<Integer, ResultWrapper> yxData, Map<Integer, ResultWrapper> ymData) throws PacketInCorrectException,
 			UnRegistSupervisorException {
-		throw new UnRegistSupervisorException();
+		throw new UnRegistSupervisorException(String.format("未找到该设备的解析策略，请检查<%s>配置文件",
+				SessionUtils.getLogoType(session)));
 	}
 
 }

@@ -40,6 +40,27 @@ public class Utils {
 		return str.substring(len - 8, len);
 	}
 
+	public static float byte2float(byte[] b) {
+		byte[] reverse = new byte[4];
+		reverse[0] = b[3];
+		reverse[1] = b[2];
+		reverse[2] = b[1];
+		reverse[3] = b[0];
+		return Float.intBitsToFloat(byteArrayToInt(reverse, 0));
+	}
+
+	public static int byte2Int(byte[] b, boolean r) {
+		if (r) {
+			byte[] reverse = new byte[4];
+			reverse[0] = b[3];
+			reverse[1] = b[2];
+			reverse[2] = b[1];
+			reverse[3] = b[0];
+			return byteArrayToInt(reverse, 0);
+		}
+		return byteArrayToInt(b, 0);
+	}
+
 	/**
 	 * 字节数组转int
 	 * 
@@ -105,8 +126,6 @@ public class Utils {
 
 		return ByteUtils.byte8ToLong(bytes) & 0xFFFFFFFFl;
 	}
-
-
 
 	public static String getCurrentTime() {
 		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(System.currentTimeMillis()));
