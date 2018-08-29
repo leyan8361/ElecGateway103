@@ -106,6 +106,12 @@ public abstract class AbsDeviceUnpackStrategy<T extends AbsJsonConvert<V>, V ext
 		} catch (BufferUnderflowException e) {
 			in.reset();
 			throw new BufferTransferIncompleteException(e);
+		} catch (Exception e) {
+			if (e instanceof IgnorePackageException || e instanceof BufferTransferIncompleteException
+					|| e instanceof UnRegistSupervisorException)
+				throw e;
+			in.reset();
+			throw new PacketInCorrectException(e);
 		}
 	}
 
