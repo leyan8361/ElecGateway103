@@ -78,6 +78,10 @@ public class GateWayDecoder extends CumulativeProtocolDecoder {
 		} catch (PacketInCorrectException e) {
 			// ELog.getInstance().log("------------设备读取异常，数据长度错误--------------",
 			// session);
+			if (in.hasRemaining()) {
+				in.position(in.limit());
+				ELog.getInstance().err("-------------" + e.getMessage(), session);
+			}
 			return true;
 		} catch (IgnorePackageException e) {
 			// ELog.getInstance().log(String.format("------------忽略此类报文的处理 [%s]--------------",
