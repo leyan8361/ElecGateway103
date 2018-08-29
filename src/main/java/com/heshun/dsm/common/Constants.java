@@ -62,6 +62,8 @@ public class Constants {
 	/**
 	 * 需求侧后台接口action(批量上报接口)
 	 */
+	
+	//http://dsm.gate.jsclp.cn/dsm/api/front/insertDataBach
 	private static String BATCH_ACTION = "dsm/api/front/insertDataBach";
 	/**
 	 * 配电，环境监控后台domain

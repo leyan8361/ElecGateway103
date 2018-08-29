@@ -1,6 +1,6 @@
 package com.heshun.dsm.common;
 
 public class Config {
-	public static boolean isDebug = true;
+	public static boolean isDebug = false;
 
 }
