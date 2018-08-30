@@ -127,16 +127,6 @@ public class DISD687UnpStrategy extends AbsDeviceUnpackStrategy<DISD687Convert, 
 			Map<Integer, ResultWrapper> yxData, Map<Integer, ResultWrapper> ymData) throws IgnorePackageException,
 			PacketInCorrectException {
 		DISD687Packet packet = fetchOrInitDeviceConvert().getOriginal();
-
-		/*
-		 * try { for (int i = 0; i < 37; i++) { byte[] _singleData =
-		 * ycData.get(i + 1).getOriginData(); byte high, low; high =
-		 * _singleData[0]; low = _singleData[1];
-		 * 
-		 * setParam(i, high, low, packet); } } catch (NullPointerException e) {
-		 * throw new PacketInCorrectException(); }
-		 */
-
 		for (Entry<Integer, ResultWrapper> entry : ycData.entrySet()) {
 			int index = entry.getKey();
 			ResultWrapper result = ycData.get(index);
@@ -144,7 +134,7 @@ public class DISD687UnpStrategy extends AbsDeviceUnpackStrategy<DISD687Convert, 
 			if (m == null)
 				continue;
 			try {
-				m.invoke(packet, Float.intBitsToFloat(Utils.byteArrayToInt(result.getOriginData(), 0)));
+				m.invoke(packet, Utils.byte2float(result.getOriginData()));
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				e.printStackTrace();
 			}
@@ -156,7 +146,7 @@ public class DISD687UnpStrategy extends AbsDeviceUnpackStrategy<DISD687Convert, 
 			if (m == null)
 				continue;
 			try {
-				m.invoke(packet, (long) (Utils.byteArrayToInt(result.getOriginData(), 0)));
+				m.invoke(packet, (long) (Utils.byte2Int(result.getOriginData(), true)));
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				e.printStackTrace();
 			}
