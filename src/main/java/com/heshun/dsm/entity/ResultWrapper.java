@@ -1,5 +1,7 @@
 package com.heshun.dsm.entity;
 
+import java.util.Arrays;
+
 public class ResultWrapper {
 
 	//默认2个字节的无符号整形
@@ -29,6 +31,11 @@ public class ResultWrapper {
 
 	public void setOriginData(byte[] originData) {
 		this.originData = originData;
+	}
+	
+	public boolean illegal() {
+		byte[] _temp =new byte[] {(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0x7f};
+		return Arrays.equals(originData, _temp);
 	}
 
 }

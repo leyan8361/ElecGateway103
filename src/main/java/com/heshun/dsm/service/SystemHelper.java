@@ -57,8 +57,8 @@ public class SystemHelper {
 			if (Config.isDebug) {
 				fis = new FileInputStream(new File("src/main/resource/" + Constants.CONFIG_PATH));
 			} else {
-				fis = new FileInputStream(new File(SystemHelper.class.getResource("/" + Constants.CONFIG_PATH)
-						.getPath()));
+				fis = new FileInputStream(
+						new File(SystemHelper.class.getResource("/" + Constants.CONFIG_PATH).getPath()));
 			}
 			byte[] buffer = new byte[fis.available()];
 			fis.read(buffer);
@@ -125,9 +125,8 @@ public class SystemHelper {
 			String version = _config.getString("version");
 			String logPath = _config.getString("log_path");
 
-			ELog.getInstance().log(
-					String.format("读取配置文件：\r\n%s \r\n 解析结果[%s,%s,%s,%s,%s,%s]", str, _eserver, _port, sesing_gap,
-							request_gap, feed_gap, logPath));
+			ELog.getInstance().log(String.format("读取配置文件：\r\n%s \r\n 解析结果[%s,%s,%s,%s,%s,%s]", str, _eserver, _port,
+					sesing_gap, request_gap, feed_gap, logPath));
 			Constants.ELEC_SERVER_PRFIX = _eserver;
 			Constants.ENVIRO_SERVER_PRFIX = _pdServer;
 			Constants.TCP_ACCEPTOR_PORT = _port;
@@ -153,8 +152,8 @@ public class SystemHelper {
 			if (Config.isDebug) {
 				fis = new FileInputStream(new File("src/main/resource/" + Constants.SERVER_PATH));
 			} else {
-				fis = new FileInputStream(new File(SystemHelper.class.getResource("/" + Constants.SERVER_PATH)
-						.getPath()));
+				fis = new FileInputStream(
+						new File(SystemHelper.class.getResource("/" + Constants.SERVER_PATH).getPath()));
 			}
 			byte[] buffer = new byte[fis.available()];
 			fis.read(buffer);
@@ -165,9 +164,8 @@ public class SystemHelper {
 				return false;
 			Constants.ELEC_SERVER_PRFIX = server;
 			Constants.TCP_ACCEPTOR_PORT = port;
-			ELog.getInstance().log(
-					String.format("server_url:%s  ////  tcp_port:%s", Constants.ELEC_SERVER_PRFIX,
-							Constants.TCP_ACCEPTOR_PORT));
+			ELog.getInstance().log(String.format("server_url:%s  ////  tcp_port:%s", Constants.ELEC_SERVER_PRFIX,
+					Constants.TCP_ACCEPTOR_PORT));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			return false;
@@ -192,8 +190,8 @@ public class SystemHelper {
 			if (Config.isDebug) {
 				fis = new FileInputStream(new File(String.format("src/main/resource/station_%s.cfg", logotype)));
 			} else {
-				fis = new FileInputStream(new File(SystemHelper.class.getResource(
-						String.format("/station_%s.cfg", logotype)).getPath()));
+				fis = new FileInputStream(
+						new File(SystemHelper.class.getResource(String.format("/station_%s.cfg", logotype)).getPath()));
 			}
 			byte[] buffer = new byte[fis.available()];
 			fis.read(buffer);
@@ -205,7 +203,7 @@ public class SystemHelper {
 			HashMap<Integer, Device> devices = new HashMap<Integer, Device>();
 			for (String m : _devices) {
 				// 用双斜杠注释。。
-				if (m.trim().startsWith("//"))
+				if (m.trim().startsWith("//") || m.trim() == null || m.trim().length() == 0)
 					continue;
 				// 16,eqa300,26#
 				String[] _attrs = m.trim().split(",");
@@ -247,8 +245,8 @@ public class SystemHelper {
 			if (Config.isDebug) {
 				fis = new FileInputStream(new File(String.format("src/main/resource/switch/%s", fileName)));
 			} else {
-				fis = new FileInputStream(new File(SystemHelper.class
-						.getResource(String.format("/switch/%s", fileName)).getPath()));
+				fis = new FileInputStream(
+						new File(SystemHelper.class.getResource(String.format("/switch/%s", fileName)).getPath()));
 			}
 			isr = new InputStreamReader(fis);
 			reader = new BufferedReader(isr);

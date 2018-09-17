@@ -95,6 +95,9 @@ public class PMC350UnpStrategy extends AbsDeviceUnpackStrategy<PMC350Convert, PM
 		for (Entry<Integer, ResultWrapper> entry : ycData.entrySet()) {
 			int index = entry.getKey();
 			ResultWrapper result = ycData.get(index);
+			if(result.illegal()) {
+				break;
+			}
 			Method m = methods_07.get(index);
 			if (m == null)
 				continue;
@@ -107,6 +110,9 @@ public class PMC350UnpStrategy extends AbsDeviceUnpackStrategy<PMC350Convert, PM
 		for (Entry<Integer, ResultWrapper> entry : ymData.entrySet()) {
 			int index = entry.getKey();
 			ResultWrapper result = ymData.get(index);
+			if(result.illegal()) {
+				break;
+			}
 			Method m = methods_0A.get(index);
 			if (m == null)
 				continue;
@@ -143,10 +149,14 @@ public class PMC350UnpStrategy extends AbsDeviceUnpackStrategy<PMC350Convert, PM
 			Map<Integer, ResultWrapper> yxData, Map<Integer, ResultWrapper> ymData) throws IgnorePackageException,
 			PacketInCorrectException {
 		PMC350Packet packet = fetchOrInitDeviceConvert().getOriginal();
+		
 
 		for (Entry<Integer, ResultWrapper> entry : ycData.entrySet()) {
 			int index = entry.getKey();
 			ResultWrapper result = ycData.get(index);
+			if(result.illegal()) {
+				break;
+			}
 			Method m = methods_07.get(index);
 			if (m == null)
 				continue;
@@ -159,6 +169,9 @@ public class PMC350UnpStrategy extends AbsDeviceUnpackStrategy<PMC350Convert, PM
 		for (Entry<Integer, ResultWrapper> entry : ymData.entrySet()) {
 			int index = entry.getKey();
 			ResultWrapper result = ymData.get(index);
+			if(result.illegal()) {
+				break;
+			}
 			Method m = methods_0A.get(index);
 			if (m == null)
 				continue;
