@@ -4,6 +4,7 @@ import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 
 import com.heshun.dsm.entity.Device;
+import com.heshun.dsm.handler.strategy.acrel.PZ7280EUnpStrategy;
 import com.heshun.dsm.handler.strategy.bg5485.BG5485UnpStrategy;
 import com.heshun.dsm.handler.strategy.def.DefaultUnpStrategy;
 import com.heshun.dsm.handler.strategy.dtsd342._7n.DTSD3427NUnPackStrategy;
@@ -39,6 +40,8 @@ public class UnpackerFactory {
 		switch (device.model.trim()) {
 		case "logotype":
 			return new LogoTypeUnpStrategy(session, in, device);
+		case "PZ7280E":
+			return new PZ7280EUnpStrategy(session, in, device);
 		case "eqa300":
 			return new EQA300UnpStrategy(session, in, device);
 		case "eqa300t":
